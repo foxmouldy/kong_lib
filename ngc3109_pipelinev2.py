@@ -6,6 +6,7 @@ import pylab as pl
 import os
 from optparse import OptionParser 
 # Bradley Frank, July 2012
+# For use NGC3109 data, observed in WBC8k with KAT-7
 
 usage = "usage: %prog options"
 parser = OptionParser(usage=usage);
