@@ -95,6 +95,7 @@ def easy_cal():
 	print '\n'
 	print 'Calibration'
 	print '\n'
+	clearcal(vis = msfile);	
 	os.system('rm -r '+btable);
 	os.system('rm -r '+ftable);
 	os.system('rm -r '+gtable);
@@ -220,9 +221,6 @@ def split_spec():
 def split_sub():
 	# Continuum Subtraction and splitting 
 	global tag;
-	#print "breakpoint: split_sub"
-	#print tag; 
-	sys.exit(0);
 	splittag = tag+'.'+source+'.split';
 	if os.path.exists(splittag+'.ms')==True: 
 		print "\n"
@@ -303,8 +301,6 @@ phasefield = '1018*';
 source = 'NGC3109*';
 ref_ant = 'ant5';
 rest_freq = '1420.406e06MHz'
-
-print options
 
 if options.calls!=None:
 	for c in options.calls.split(','):
