@@ -5,6 +5,7 @@ import casac
 import pylab as pl
 import os
 from optparse import OptionParser 
+# Bradley Frank, July 2012
 
 usage = "usage: %prog options"
 parser = OptionParser(usage=usage);
