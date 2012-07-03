@@ -1,0 +1,317 @@
+import sys
+from tasks import *
+from taskinit import *
+import casac
+import pylab as pl
+import os
+from optparse import OptionParser 
+
+usage = "usage: %prog options"
+parser = OptionParser(usage=usage);
+
+parser.add_option("--tag", type = 'string', dest = 'tag', default=None, 
+	help = 'File tag to use in this run');
+parser.add_option("--retag", type='string', dest = 'retag', default=None, 
+	help = 'New tag to use');
+parser.add_option("--calls", type='string', dest = 'calls', default=None, 
+	help = 'Custom pipeline (input each block in sequence)')
+(options, args) = parser.parse_args();
+
+if len(sys.argv)==1: 
+	parser.print_help();
+	dummy = sys.exit(0);
+
+global ui;
+
+def read_inps(fname):
+	'''
+	This reads in the inputs from the text file fname. Each line in the text file should
+	contain the desired user-input. For example: 
+	spw = 0:100~200
+	will produce ui['spw'] = '0:100~200'
+	'''
+	f = open(fname);
+	global ui;
+	ui = {};
+	for line in f: 
+		k,v = line.strip().split('=');
+		ui[k.strip()] = v.strip();
+	f.close();
+	return(ui);
+
+
+def get_chans(msfile, fi, di):
+	'''
+	For msfile, takes a desired frequency (in Hz) and returns the lower and upper bounds for a 
+	window on either side of fi, in lengths of di
+	'''
+	tb.open(msfile+'/SPECTRAL_WINDOW');
+	f1 = chan_freq = tb.getcol('CHAN_FREQ')[0];
+	df = tb.getcol('CHAN_WIDTH')[0];
+	i = pl.round_((f1-fi)/df);
+	tb.close();
+	spw_lower  = i - di; spw_upper = i + di; 
+	if spw_lower < 0:
+		spw_lower = 0;
+		spw_upper = 200;
+	return(str(int(spw_lower)), str(int(spw_upper)));
+
+def set_jy():
+	setjy(vis = msfile, 
+		field = ampfield);
+
+def easy_flag():
+	'''
+	Just do the generic flagging. 
+	'''
+	print 'Clearing flags and previous calibration.'
+	print '\n'
+	print '\n'
+	tflagdata(vis = msfile, 
+		mode = 'unflag');
+	clearcal(vis = msfile);
+	print "\n"
+	print "Easy Flag!"
+	print "Flagging Autocorrelations"
+	print '\n'
+	print '\n'
+	
+	flagautocorr(vis = msfile); 
+	
+	print "Flagging shadowed visibilities -> rflag -> tfcrop";
+	print '\n'
+	print '\n'
+	
+	tflagdata(vis = msfile, 
+		mode = 'shadow');
+	tflagdata(vis = msfile, 
+		mode = 'tfcrop');
+	tflagdata(vis = msfile, 
+	mode = 'rflag');
+
+def easy_cal():
+	print '\n'
+	print 'Calibration'
+	print '\n'
+	os.system('rm -r '+btable);
+	os.system('rm -r '+ftable);
+	os.system('rm -r '+gtable);
+	bandpass(vis = msfile, 
+		caltable = btable, 
+		interp = '', 
+		field = ampfield, 
+		bandtype = 'B', 
+		solint = 'inf', 
+		combine = 'scan', 
+		refant = ref_ant);
+	
+	plotcal(caltable = btable, 
+		field = ampfield, 
+		subplot = 211, 
+		yaxis = 'amp');
+	plotcal(caltable = btable, 
+		subplot = 212,
+		yaxis = 'phase', 
+		figfile = btable+'.png');
+
+	# Gain Calibration
+	# We're going to average channels 150~200 
+	gaincal(vis = msfile, 
+		caltable = gtable, 
+		gainfield = '', 
+		gaintable = btable, 
+		field = ampfield+','+phasefield,
+		interp='nearest', 
+		spw='0:150~200', 
+		solint = 'inf', 
+		calmode='ap', 
+		refant = ref_ant);
+	
+	# Fluxscale
+	# This gives us our first indicator of whether our calibration is going well or not. 
+	# The flux for 1018* is ~ 3.5Jy, so we want to get within this ballpark.
+	
+	fluxscale(vis = msfile, 
+		fluxtable = ftable, 
+		caltable = gtable, 
+		reference = ampfield, 
+		transfer = phasefield);
+	
+	plotcal(caltable = ftable, 
+		field =  ampfield+','+phasefield,
+		subplot = 211,
+		yaxis = 'amp');
+	plotcal(caltable = ftable,
+		subplot = 212,
+		yaxis = 'phase',
+		figfile= ftable+'.png')
+
+	# Plot the bandpass
+	plotcal(caltable = btable, 
+		field = ampfield, 
+		subplot = 211, 
+		yaxis = 'amp'); 
+	plotcal(caltable = btable,
+		subplot = 212,
+		yaxis = 'phase',
+		figfile= btable+'.png');
+	
+	applycal(vis = msfile, 
+		gaintable = [ftable, btable], 
+		gainfield = [phasefield, '*'],
+		interp = ['linear', 'nearest'],
+		field = phasefield+','+source);
+	applycal(vis = msfile, 
+		gaintable = [ftable, btable], 
+		gainfield = [ampfield, '*']);
+	
+	plotxy(vis = msfile, 
+		xaxis = 'phase', 
+		yaxis = 'amp', 
+		datacolumn = 'corrected', 
+		field = ampfield, 
+		interactive = False, 
+		figfile = tag+'_amphase.'+ampfield+'.png')
+
+	plotxy(vis = msfile, 
+		xaxis = 'phase', 
+		yaxis = 'amp', 
+		datacolumn = 'corrected', 
+		field = phasefield, 
+		averagemode = 'vector', 
+		width='100',
+		interactive = False, 
+		figfile = tag+'_amphase.'+phasefield+'.png')
+
+	# Now plot the spectrum of the source
+	plotxy(vis = msfile, 
+		xaxis = 'frequency', 
+		yaxis = 'amp', 
+		datacolumn = 'corrected', 
+		field = source, 
+		averagemode='vector', 
+		timebin = 'all', 
+		crossscans = True, 
+		crossbls = True, 
+		restfreq = '1420.406MHz', 
+		figfile = tag+'_spectrum.'+source+'.png');
+def split_spec():
+	global tag, msfile, spw_lower, spw_upper, btable, gtable, ftable;
+	spw_lower, spw_upper = get_chans(msfile, 1418e06, 100);
+	print '\n'
+	print '\n'
+	print 'Splitting '+msfile+' from '+spw_lower+' to '+spw_upper;
+	print '\n'
+	print '\n'
+	tag = options.retag+'.'+spw_lower+'to'+spw_upper;
+	#print "breakpoint: split_spec"
+	#print  tag
+	split(vis = msfile, 
+		outputvis = tag+'.ms', 
+		datacolumn = 'data', 
+		spw = '0:'+spw_lower+'~'+spw_upper);
+	msfile = tag+'.ms';
+	btable = tag+'.B0';
+	gtable = tag+'.G0';
+	ftable = tag+'.F0';
+
+def split_sub():
+	# Continuum Subtraction and splitting 
+	global tag;
+	#print "breakpoint: split_sub"
+	#print tag; 
+	sys.exit(0);
+	splittag = tag+'.'+source+'.split';
+	if os.path.exists(splittag+'.ms')==True: 
+		print "\n"
+		print 'Deleting Old Split MS'
+		print "\n"
+		os.system('rm -r '+splittag+'.ms');
+	if os.path.exists(splittag+'.ms.contsub')==True: 
+		print "\n"
+		print "Deleting Old UVContSub'd MSs"
+		print "\n"
+		os.system('rm -r '+splittag+'.ms.cont*')
+	print "\n"
+	print 'Creating New Split MS'
+	print "\n"
+	split(vis = msfile, 
+		outputvis = splittag+'.ms', 
+		field = source, 
+		spw = '', 
+		datacolumn = 'corrected');
+	print "\n"
+	print 'Continuum Subtraction'
+	print "\n"
+	uvcontsub(vis = splittag+'.ms', 
+		field = source, 
+		fitspw = '0:0~30;150~200', 
+		spw='0', 
+		solint=0.0, 
+		fitorder = 0, 
+		want_cont = True);
+	tag = splittag+'.ms';
+
+
+def easy_im():
+	print '\n'
+	print '\n'
+	print "Cleaning over Spectral Range"
+	print '\n'
+	print '\n'
+	clean(vis = tag+'.contsub', 
+		imagename = options.retag+'.contsub'+'.50000iters', 
+		field = source, 
+		selectdata = False, 
+		mode = 'channel', 
+		niter = 50000, 
+		interactive = False, 
+		imsize = 512, 
+		cell = '30arcsec', 
+		restfreq = '1420.406MHz', 
+		pbcor=True, minpb=0.02);
+	print '\n'
+	print '\n'
+	print "Cleaning Continuum"
+	print '\n'
+	print '\n'
+	clean(vis = tag+'.cont', 
+		imagename = options.retag+'.cont.5000iters', 
+		field = source, 
+		selectdata = False, 
+		mode = 'channel', 
+		niter = 5000, 
+		interactive = False, 
+		imsize = 512, 
+		cell = '30arcsec', 
+		restfreq = '1420.406MHz',
+		pbcor=True, minpb=0.02);
+	
+global tag, msfile, btable, gtable, ftable, ampfield, phasefield, source, ref_ant, rest_freq, splitms
+
+tag = options.tag; 
+if options.retag==None: 
+	options.retag=tag; 
+msfile = options.tag+'.ms';
+btable = options.retag+'.B0';
+gtable = options.retag+'.G0';
+ftable = options.retag+'.F0'; 
+ampfield = '1934*';
+phasefield = '1018*';
+source = 'NGC3109*';
+ref_ant = 'ant5';
+rest_freq = '1420.406e06MHz'
+
+print options
+
+if options.calls!=None:
+	for c in options.calls.split(','):
+		exec(c+'()');
+else:
+	split_spec();
+	set_jy();
+	easy_flag();
+	easy_cal();
+	split_sub();
+	easy_im();
+
