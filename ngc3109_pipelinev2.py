@@ -268,7 +268,7 @@ def easy_im():
 		mode = 'channel', 
 		niter = int(ui['niter']), 
 		interactive = False, 
-		imsize = ui['imsize'], 
+		imsize = int(ui['imsize']), 
 		cell = ui['cell'], 
 		restfreq = '1420.406MHz', 
 		pbcor=ui['pbcor'], minpb=ui['minpb']);
@@ -284,7 +284,7 @@ def easy_im():
 		mode = 'channel', 
 		niter = int(ui['niter']), 
 		interactive = False, 
-		imsize = ui['imsize'], 
+		imsize = int(ui['imsize']), 
 		cell = ui['cell'], 
 		restfreq = '1420.406MHz',
 		pbcor=ui['pbcor'], minpb=ui['minpb']);
