@@ -305,6 +305,9 @@ rest_freq = '1420.406e06MHz'
 
 global ui;
 if options.ui==None:
+	if os.path.exists('ngc3109_pipelinesettings.txt')==False:
+		print "Defaults not found. Copy from ~/brad_lib/ to here and try again :)"
+		sys.exit(0);
 	ui = read_inps('ngc3109_pipelinesettings.txt');
 #ui = read_inps(options.ui);
 print ui;
