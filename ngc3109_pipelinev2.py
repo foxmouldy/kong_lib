@@ -271,7 +271,7 @@ def easy_im():
 		imsize = int(ui['imsize']), 
 		cell = ui['cell'], 
 		restfreq = '1420.406MHz', 
-		pbcor=ui['pbcor'], minpb=ui['minpb']);
+		pbcor=ui['pbcor'], minpb=pl.float32(ui['minpb']));
 	print '\n'
 	print '\n'
 	print "Cleaning Continuum"
@@ -287,7 +287,7 @@ def easy_im():
 		imsize = int(ui['imsize']), 
 		cell = ui['cell'], 
 		restfreq = '1420.406MHz',
-		pbcor=ui['pbcor'], minpb=ui['minpb']);
+		pbcor=ui['pbcor'], minpb=pl.float32(ui['minpb']));
 	
 global tag, msfile, btable, gtable, ftable, ampfield, phasefield, source, ref_ant, rest_freq, splitms
 
