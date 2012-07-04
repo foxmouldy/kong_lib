@@ -202,7 +202,7 @@ def easy_cal():
 		figfile = tag+'_spectrum.'+source+'.png');
 def split_spec():
 	global tag, msfile, spw_lower, spw_upper, btable, gtable, ftable;
-	spw_lower, spw_upper = get_chans(msfile, pl.float32(ui.fi), int(ui.di));
+	spw_lower, spw_upper = get_chans(msfile, pl.float32(ui['fi']), int(ui['di']));
 	print '\n'
 	print '\n'
 	print 'Splitting '+msfile+' from '+spw_lower+' to '+spw_upper;
