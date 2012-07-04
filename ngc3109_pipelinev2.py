@@ -309,10 +309,9 @@ if options.ui==None:
 		print "Defaults not found. Copy from ~/brad_lib/ to here and try again :)"
 		sys.exit(0);
 	ui = read_inps('ngc3109_pipelinesettings.txt');
-#ui = read_inps(options.ui);
-print ui;
+
 ref_ant = ui['ref_ant'];
-sys.exit(0)
+
 
 if options.calls!=None:
 	for c in options.calls.split(','):
