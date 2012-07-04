@@ -311,7 +311,7 @@ if options.ui==None:
 	ui = read_inps('ngc3109_pipelinesettings.txt');
 
 ref_ant = ui['ref_ant'];
-ut['pbcor'] = ut['pbcor'].upper()=='TRUE';
+ui['pbcor'] = ui['pbcor'].upper()=='TRUE';
 
 if options.calls!=None:
 	for c in options.calls.split(','):
