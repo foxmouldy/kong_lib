@@ -287,7 +287,7 @@ def easy_im():
 		imsize = int(ui['imsize']), 
 		cell = ui['cell'], 
 		restfreq = '1420.406MHz',
-		pbcor=ui['pbcor'], minpb=pl.float32(ui['minpb']));
+		pbcor=ui['pbcor']==, minpb=pl.float32(ui['minpb']));
 	
 global tag, msfile, btable, gtable, ftable, ampfield, phasefield, source, ref_ant, rest_freq, splitms
 
@@ -311,7 +311,7 @@ if options.ui==None:
 	ui = read_inps('ngc3109_pipelinesettings.txt');
 
 ref_ant = ui['ref_ant'];
-
+ut['pbcor'] = ut['pbcor'].upper()=='TRUE';
 
 if options.calls!=None:
 	for c in options.calls.split(','):
