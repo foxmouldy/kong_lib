@@ -17,6 +17,8 @@ parser.add_option("--retag", type='string', dest = 'retag', default=None,
 	help = 'New tag to use');
 parser.add_option("--calls", type='string', dest = 'calls', default=None, 
 	help = 'Custom pipeline (input each block in sequence)')
+parser.add_option("--ui", type='string', dest='ui', default=None, 
+	help = "Optional Settings File");
 (options, args) = parser.parse_args();
 
 if len(sys.argv)==1: 
@@ -42,7 +44,7 @@ def read_inps(fname):
 	return(ui);
 
 
-def get_chans(msfile, fi, di):
+def get_chans(msfile, fi=1418e06, di=100):
 	'''
 	For msfile, takes a desired frequency (in Hz) and returns the lower and upper bounds for a 
 	window on either side of fi, in lengths of di
@@ -125,7 +127,7 @@ def easy_cal():
 		gaintable = btable, 
 		field = ampfield+','+phasefield,
 		interp='nearest', 
-		spw='0:150~200', 
+		spw= ui['gaspw'], 
 		solint = 'inf', 
 		calmode='ap', 
 		refant = ref_ant);
@@ -200,7 +202,7 @@ def easy_cal():
 		figfile = tag+'_spectrum.'+source+'.png');
 def split_spec():
 	global tag, msfile, spw_lower, spw_upper, btable, gtable, ftable;
-	spw_lower, spw_upper = get_chans(msfile, 1418e06, 100);
+	spw_lower, spw_upper = get_chans(msfile, pl.float32(ui.fi), int(ui.di));
 	print '\n'
 	print '\n'
 	print 'Splitting '+msfile+' from '+spw_lower+' to '+spw_upper;
@@ -245,7 +247,7 @@ def split_sub():
 	print "\n"
 	uvcontsub(vis = splittag+'.ms', 
 		field = source, 
-		fitspw = '0:0~30;150~200', 
+		fitspw = ui['fitspw'], 
 		spw='0', 
 		solint=0.0, 
 		fitorder = 0, 
@@ -260,32 +262,32 @@ def easy_im():
 	print '\n'
 	print '\n'
 	clean(vis = tag+'.contsub', 
-		imagename = options.retag+'.contsub'+'.50000iters', 
+		imagename = options.retag+'.contsub.'+ui['niter']+'iters', 
 		field = source, 
 		selectdata = False, 
 		mode = 'channel', 
-		niter = 50000, 
+		niter = int(ui['niter']), 
 		interactive = False, 
-		imsize = 512, 
-		cell = '30arcsec', 
+		imsize = ui['imsize'], 
+		cell = ui['cell'], 
 		restfreq = '1420.406MHz', 
-		pbcor=True, minpb=0.02);
+		pbcor=ui['pbcor'], minpb=ui['minpb']);
 	print '\n'
 	print '\n'
 	print "Cleaning Continuum"
 	print '\n'
 	print '\n'
 	clean(vis = tag+'.cont', 
-		imagename = options.retag+'.cont.5000iters', 
+		imagename = options.retag+'.cont.'+ui['niter']+'iters', 
 		field = source, 
 		selectdata = False, 
 		mode = 'channel', 
-		niter = 5000, 
+		niter = int(ui['niter']), 
 		interactive = False, 
-		imsize = 512, 
-		cell = '30arcsec', 
+		imsize = ui['imsize'], 
+		cell = ui['cell'], 
 		restfreq = '1420.406MHz',
-		pbcor=True, minpb=0.02);
+		pbcor=ui['pbcor'], minpb=ui['minpb']);
 	
 global tag, msfile, btable, gtable, ftable, ampfield, phasefield, source, ref_ant, rest_freq, splitms
 
@@ -299,8 +301,15 @@ ftable = options.retag+'.F0';
 ampfield = '1934*';
 phasefield = '1018*';
 source = 'NGC3109*';
-ref_ant = 'ant5';
 rest_freq = '1420.406e06MHz'
+
+global ui;
+if options.ui==None:
+	ui = read_inps('ngc3109_pipelinesettings.txt');
+#ui = read_inps(options.ui);
+print ui;
+ref_ant = ui['ref_ant'];
+sys.exit(0)
 
 if options.calls!=None:
 	for c in options.calls.split(','):

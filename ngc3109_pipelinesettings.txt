@@ -1,0 +1,10 @@
+fi = 1418e06
+df = 100
+ref_ant = ant5
+fitspw = 0:0~30;150~200
+gaspw = 0:150~200
+niter = 5000
+imsize = 512
+cell = 30arcsec
+pbcor = False
+minpb = 0.2
