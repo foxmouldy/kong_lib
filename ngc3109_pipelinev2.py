@@ -304,14 +304,20 @@ source = 'NGC3109*';
 rest_freq = '1420.406e06MHz'
 
 global ui;
-if options.ui==None:
+if options.ui!=None:
+	ui = read_inps(options.ui);
+else:
 	if os.path.exists('ngc3109_pipelinesettings.txt')==False:
-		print "Defaults not found. Copy from ~/brad_lib/ to here and try again :)"
+		print "Defaults not found. Copy from ~/brad_lib/ to . and try again :)"
 		sys.exit(0);
-	ui = read_inps('ngc3109_pipelinesettings.txt');
+	else: 
+		ui = read_inps('ngc3109_pipelinesettings.txt');
 
 ref_ant = ui['ref_ant'];
 ui['pbcor'] = ui['pbcor'].upper()=='TRUE';
+
+#print msfile;
+#sys.exit(0);
 
 if options.calls!=None:
 	for c in options.calls.split(','):
