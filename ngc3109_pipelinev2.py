@@ -110,14 +110,14 @@ def easy_cal():
 		combine = 'scan', 
 		refant = ref_ant);
 	
-	plotcal(caltable = btable, 
-		field = ampfield, 
-		subplot = 211, 
-		yaxis = 'amp');
-	plotcal(caltable = btable, 
-		subplot = 212,
-		yaxis = 'phase', 
-		figfile = btable+'.png');
+	#plotcal(caltable = btable, 
+		#field = ampfield, 
+		#subplot = 211, 
+		#yaxis = 'amp');
+	#plotcal(caltable = btable, 
+		#subplot = 212,
+		#yaxis = 'phase', 
+		#figfile = btable+'.png');
 
 	# Gain Calibration
 	# We're going to average channels 150~200 
@@ -142,24 +142,24 @@ def easy_cal():
 		reference = ampfield, 
 		transfer = phasefield);
 	
-	plotcal(caltable = ftable, 
-		field =  ampfield+','+phasefield,
-		subplot = 211,
-		yaxis = 'amp');
-	plotcal(caltable = ftable,
-		subplot = 212,
-		yaxis = 'phase',
-		figfile= ftable+'.png')
+	#plotcal(caltable = ftable, 
+		#field =  ampfield+','+phasefield,
+		#subplot = 211,
+		#yaxis = 'amp');
+	#plotcal(caltable = ftable,
+		#subplot = 212,
+		#yaxis = 'phase',
+		#figfile= ftable+'.png')
 
 	# Plot the bandpass
-	plotcal(caltable = btable, 
-		field = ampfield, 
-		subplot = 211, 
-		yaxis = 'amp'); 
-	plotcal(caltable = btable,
-		subplot = 212,
-		yaxis = 'phase',
-		figfile= btable+'.png');
+	#plotcal(caltable = btable, 
+		#field = ampfield, 
+		#subplot = 211, 
+		#yaxis = 'amp'); 
+	#plotcal(caltable = btable,
+		#subplot = 212,
+		#yaxis = 'phase',
+		#figfile= btable+'.png');
 	
 	applycal(vis = msfile, 
 		gaintable = [ftable, btable], 
@@ -170,36 +170,36 @@ def easy_cal():
 		gaintable = [ftable, btable], 
 		gainfield = [ampfield, '*']);
 	
-	plotxy(vis = msfile, 
-		xaxis = 'phase', 
-		yaxis = 'amp', 
-		datacolumn = 'corrected', 
-		field = ampfield, 
-		interactive = False, 
-		figfile = tag+'_amphase.'+ampfield+'.png')
+	#plotxy(vis = msfile, 
+		#xaxis = 'phase', 
+		#yaxis = 'amp', 
+		#datacolumn = 'corrected', 
+		#field = ampfield, 
+		#interactive = False, 
+		#figfile = tag+'_amphase.'+ampfield+'.png')
 
-	plotxy(vis = msfile, 
-		xaxis = 'phase', 
-		yaxis = 'amp', 
-		datacolumn = 'corrected', 
-		field = phasefield, 
-		averagemode = 'vector', 
-		width='100',
-		interactive = False, 
-		figfile = tag+'_amphase.'+phasefield+'.png')
+	#plotxy(vis = msfile, 
+		#xaxis = 'phase', 
+		#yaxis = 'amp', 
+		#datacolumn = 'corrected', 
+		#field = phasefield, 
+		#averagemode = 'vector', 
+		#width='100',
+		#interactive = False, 
+		#figfile = tag+'_amphase.'+phasefield+'.png')
 
 	# Now plot the spectrum of the source
-	plotxy(vis = msfile, 
-		xaxis = 'frequency', 
-		yaxis = 'amp', 
-		datacolumn = 'corrected', 
-		field = source, 
-		averagemode='vector', 
-		timebin = 'all', 
-		crossscans = True, 
-		crossbls = True, 
-		restfreq = '1420.406MHz', 
-		figfile = tag+'_spectrum.'+source+'.png');
+	#plotxy(vis = msfile, 
+		#xaxis = 'frequency', 
+		#yaxis = 'amp', 
+		#datacolumn = 'corrected', 
+		#field = source, 
+		#averagemode='vector', 
+		#timebin = 'all', 
+		#crossscans = True, 
+		#crossbls = True, 
+		#restfreq = '1420.406MHz', 
+		#figfile = tag+'_spectrum.'+source+'.png');
 def split_spec():
 	global tag, msfile, spw_lower, spw_upper, btable, gtable, ftable;
 	spw_lower, spw_upper = get_chans(msfile, pl.float32(ui['fi']), int(ui['di']));
