@@ -1,10 +1,12 @@
 fi = 1418e06
-df = 100
+di = 100
 ref_ant = ant5
 fitspw = 0:0~30;150~200
 gaspw = 0:150~200
-niter = 5000
-imsize = 512
+niter = 5000 
+imsize = 512 
 cell = 30arcsec
 pbcor = False
 minpb = 0.2
+manualflag_spw = True
+mf_spw = 0:54;55;80

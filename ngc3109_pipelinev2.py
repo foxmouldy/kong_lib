@@ -43,7 +43,6 @@ def read_inps(fname):
 	f.close();
 	return(ui);
 
-
 def get_chans(msfile, fi=1418e06, di=100):
 	'''
 	For msfile, takes a desired frequency (in Hz) and returns the lower and upper bounds for a 
@@ -71,6 +70,8 @@ def easy_flag():
 	print 'Clearing flags and previous calibration.'
 	print '\n'
 	print '\n'
+	
+
 	tflagdata(vis = msfile, 
 		mode = 'unflag');
 	clearcal(vis = msfile);
@@ -81,17 +82,61 @@ def easy_flag():
 	print '\n'
 	
 	flagautocorr(vis = msfile); 
-	
+
+	ui['manualflag_spw'] = ui['manualflag_spw'].upper()=='TRUE';
+	if ui['manualflag_spw']==True: 
+		print '\n';
+		print 'manualflag_spw == True ';
+		print '\n';
+		tflagdata(vis = msfile, 
+			mode = 'manual', 
+			spw = ui['mf_spw']);
+
 	print "Flagging shadowed visibilities -> rflag -> tfcrop";
 	print '\n'
 	print '\n'
 	
 	tflagdata(vis = msfile, 
-		mode = 'shadow');
+		mode = 'shadow');	
 	tflagdata(vis = msfile, 
 		mode = 'tfcrop');
 	tflagdata(vis = msfile, 
-	mode = 'rflag');
+		mode = 'rflag');
+
+def heavy_flag():
+	'''
+	This is used to hammer the data into shape. Is useful if preceded with a good manual flag.  
+	'''
+	print '\n'
+	print "Heavy Flagging"
+	print '\n'
+	tflagdata(vis = msfile, 
+		mode = 'elevation', 
+		lowerlimit = 5.0);
+	# Source 0
+	tflagdata(vis = msfile, 
+		mode = 'tfcrop', 
+		field = ampfield,
+		combinescans = True, 
+		datacolumn = 'data', 
+		flagdimension = 'freq')
+		#usewindowstats = 'both')
+	# Source 1
+	tflagdata(vis = msfile, 
+		mode = 'tfcrop', 
+		field = source,
+		combinescans = True, 
+		datacolumn = 'data', 
+		flagdimension = 'freq'); 
+		#usewindowstats = 'both')
+	# Source 2
+	tflagdata(vis = msfile, 
+		mode = 'tfcrop', 
+		field = phasefield,
+		combinescans = True, 
+		datacolumn = 'data', 
+		flagdimension = 'freq') 
+		#usewindowstats = 'both')
 
 def easy_cal():
 	print '\n'
@@ -110,15 +155,6 @@ def easy_cal():
 		combine = 'scan', 
 		refant = ref_ant);
 	
-	#plotcal(caltable = btable, 
-		#field = ampfield, 
-		#subplot = 211, 
-		#yaxis = 'amp');
-	#plotcal(caltable = btable, 
-		#subplot = 212,
-		#yaxis = 'phase', 
-		#figfile = btable+'.png');
-
 	# Gain Calibration
 	# We're going to average channels 150~200 
 	gaincal(vis = msfile, 
@@ -142,25 +178,6 @@ def easy_cal():
 		reference = ampfield, 
 		transfer = phasefield);
 	
-	#plotcal(caltable = ftable, 
-		#field =  ampfield+','+phasefield,
-		#subplot = 211,
-		#yaxis = 'amp');
-	#plotcal(caltable = ftable,
-		#subplot = 212,
-		#yaxis = 'phase',
-		#figfile= ftable+'.png')
-
-	# Plot the bandpass
-	#plotcal(caltable = btable, 
-		#field = ampfield, 
-		#subplot = 211, 
-		#yaxis = 'amp'); 
-	#plotcal(caltable = btable,
-		#subplot = 212,
-		#yaxis = 'phase',
-		#figfile= btable+'.png');
-	
 	applycal(vis = msfile, 
 		gaintable = [ftable, btable], 
 		gainfield = [phasefield, '*'],
@@ -170,36 +187,6 @@ def easy_cal():
 		gaintable = [ftable, btable], 
 		gainfield = [ampfield, '*']);
 	
-	#plotxy(vis = msfile, 
-		#xaxis = 'phase', 
-		#yaxis = 'amp', 
-		#datacolumn = 'corrected', 
-		#field = ampfield, 
-		#interactive = False, 
-		#figfile = tag+'_amphase.'+ampfield+'.png')
-
-	#plotxy(vis = msfile, 
-		#xaxis = 'phase', 
-		#yaxis = 'amp', 
-		#datacolumn = 'corrected', 
-		#field = phasefield, 
-		#averagemode = 'vector', 
-		#width='100',
-		#interactive = False, 
-		#figfile = tag+'_amphase.'+phasefield+'.png')
-
-	# Now plot the spectrum of the source
-	#plotxy(vis = msfile, 
-		#xaxis = 'frequency', 
-		#yaxis = 'amp', 
-		#datacolumn = 'corrected', 
-		#field = source, 
-		#averagemode='vector', 
-		#timebin = 'all', 
-		#crossscans = True, 
-		#crossbls = True, 
-		#restfreq = '1420.406MHz', 
-		#figfile = tag+'_spectrum.'+source+'.png');
 def split_spec():
 	global tag, msfile, spw_lower, spw_upper, btable, gtable, ftable;
 	spw_lower, spw_upper = get_chans(msfile, pl.float32(ui['fi']), int(ui['di']));
@@ -261,8 +248,14 @@ def easy_im():
 	print "Cleaning over Spectral Range"
 	print '\n'
 	print '\n'
+	imname = options.retag+'.contsub.'+ui['niter']+'iters';  
+	if os.path.exists(imname)==True: 
+		print '\n';
+		print 'Deleting old contsub image';
+		print '\n'
+		os.system('rm -r '+imname)
 	clean(vis = tag+'.contsub', 
-		imagename = options.retag+'.contsub.'+ui['niter']+'iters', 
+		imagename = imname,  
 		field = source, 
 		selectdata = False, 
 		mode = 'channel', 
@@ -272,13 +265,29 @@ def easy_im():
 		cell = ui['cell'], 
 		restfreq = '1420.406MHz', 
 		pbcor=ui['pbcor'], minpb=pl.float32(ui['minpb']));
+	im.open(tag+'.contsub');
+	pss = im.sensitivity();
+	pss = pss['pointsource']['value']
+	os.system('rm -r '+imname+'image.mom*')	
+	immoments(imagename = imname+'.image', 
+		moments = [0,1,2], 
+		includepix = [5*pss,1000000], 
+		outfile = imname+'.image.mom');
+	im.close();
+	
 	print '\n'
 	print '\n'
 	print "Cleaning Continuum"
 	print '\n'
 	print '\n'
+	imname = options.retag+'.cont.'+ui['niter']+'iters';
+	if os.path.exists(imname)==True: 
+		print '\n';
+		print 'Deleting old cont image';
+		print '\n'
+		os.system('rm -r '+imname)
 	clean(vis = tag+'.cont', 
-		imagename = options.retag+'.cont.'+ui['niter']+'iters', 
+		imagename = imname, 
 		field = source, 
 		selectdata = False, 
 		mode = 'channel', 
@@ -288,6 +297,80 @@ def easy_im():
 		cell = ui['cell'], 
 		restfreq = '1420.406MHz',
 		pbcor=ui['pbcor'], minpb=pl.float32(ui['minpb']));
+	
+	im.open(tag+'.contsub');
+	os.system('rm -r '+imname+'image.mom*')	
+	pss = im.sensitivity();
+	pss = pss['pointsource']['value']
+	immoments(imagename = imname+".image", 
+		moments = [0,1,2], 
+		includepix = [5*pss,1000000],
+		outfile = imname+'.image.mom')
+def plotem():
+	'''
+	Plotting subfunction, not included in the default pipeline. 
+	Should be used if you want to do a quick 
+	'''
+	plotcal(caltable = btable, 
+		field = ampfield, 
+		subplot = 211, 
+		yaxis = 'amp');
+	plotcal(caltable = btable, 
+		subplot = 212,
+		yaxis = 'phase', 
+		figfile = btable+'.png');
+
+
+	plotcal(caltable = ftable, 
+		field =  ampfield+','+phasefield,
+		subplot = 211,
+		yaxis = 'amp');
+	plotcal(caltable = ftable,
+		subplot = 212,
+		yaxis = 'phase',
+		figfile= ftable+'.png')
+
+	# Plot the bandpass
+	plotcal(caltable = btable, 
+		field = ampfield, 
+		subplot = 211, 
+		yaxis = 'amp'); 
+	plotcal(caltable = btable,
+		subplot = 212,
+		yaxis = 'phase',
+		figfile= btable+'.png');
+
+	plotxy(vis = msfile, 
+		xaxis = 'phase', 
+		yaxis = 'amp', 
+		datacolumn = 'corrected', 
+		field = ampfield, 
+		interactive = False, 
+		figfile = tag+'_amphase.'+ampfield+'.png')
+
+	plotxy(vis = msfile, 
+		xaxis = 'phase', 
+		yaxis = 'amp', 
+		datacolumn = 'corrected', 
+		field = phasefield, 
+		averagemode = 'vector', 
+		width='100',
+		interactive = False, 
+		figfile = tag+'_amphase.'+phasefield+'.png')
+
+	# Now plot the spectrum of the source
+	plotxy(vis = msfile, 
+		xaxis = 'frequency', 
+		yaxis = 'amp', 
+		datacolumn = 'corrected', 
+		field = source, 
+		averagemode='vector', 
+		timebin = 'all', 
+		crossscans = True, 
+		crossbls = True, 
+		restfreq = '1420.406MHz', 
+		figfile = tag+'_spectrum.'+source+'.png');
+
 	
 global tag, msfile, btable, gtable, ftable, ampfield, phasefield, source, ref_ant, rest_freq, splitms
 
