@@ -77,7 +77,7 @@ def easy_flag():
 
 	tflagdata(vis = msfile, 
 		mode = 'unflag');
-	clearcal(vis = msfile);
+	#clearcal(vis = msfile); # Clearcal is a real bottle-neck here. 
 	print "\n"
 	print "Easy Flag!"
 	print "Flagging Autocorrelations"
