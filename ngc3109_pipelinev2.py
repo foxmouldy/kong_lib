@@ -60,6 +60,9 @@ def get_chans(msfile, fi=1418e06, di=100):
 	return(str(int(spw_lower)), str(int(spw_upper)));
 
 def set_jy():
+	'''
+	Single Standalone Application of Setjy on the ampfield
+	'''
 	setjy(vis = msfile, 
 		field = ampfield);
 
@@ -146,6 +149,9 @@ def easy_cal():
 	os.system('rm -r '+btable);
 	os.system('rm -r '+ftable);
 	os.system('rm -r '+gtable);
+	# First we do setjy on the amplitude/flux/bandpass/primary calibrators. 
+	setjy(vis = msfile, 
+		field = ampfield);
 	bandpass(vis = msfile, 
 		caltable = btable, 
 		interp = '', 
@@ -381,9 +387,9 @@ msfile = options.tag+'.ms';
 btable = options.retag+'.B0';
 gtable = options.retag+'.G0';
 ftable = options.retag+'.F0'; 
-ampfield = '1934*';
-phasefield = '1018*';
-source = 'NGC3109*';
+#ampfield = '1934*';
+#phasefield = '1018*';
+#source = 'NGC3109*';
 rest_freq = '1420.406e06MHz'
 
 global ui;
@@ -398,7 +404,9 @@ else:
 
 ref_ant = ui['ref_ant'];
 ui['pbcor'] = ui['pbcor'].upper()=='TRUE';
-
+ampfield = ui['ampfield'];
+phasefield = ui['phasefield'];
+source = ui['source'];
 #print msfile;
 #sys.exit(0);
 
