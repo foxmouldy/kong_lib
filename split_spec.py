@@ -39,7 +39,6 @@ print 'Splitting '+msfile+' from '+spw_lower+' to '+spw_upper;
 print '\n'
 print '\n'
 
-tag = options.retag+'.'+spw_lower+'to'+spw_upper;
 split(vis = options.vis, 
 	outputvis = options.splitvis, 
 	datacolumn = 'data', 
