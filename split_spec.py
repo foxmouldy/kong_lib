@@ -37,7 +37,7 @@ spw_lower, spw_upper = br.get_chans(options.vis, fi=float(options.fi),
 
 print '\n'
 print '\n'
-print 'Splitting '+msfile+' from '+spw_lower+' to '+spw_upper;
+print 'Splitting '+options.vis+' from '+spw_lower+' to '+spw_upper;
 print '\n'
 print '\n'
 
