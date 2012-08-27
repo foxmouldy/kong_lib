@@ -26,6 +26,8 @@ parser.add_option('--fi', type = 'string', dest='fi', default=None,
 parser.add_option('--di', type='string', dest='di', default=None, 
 	help = 'Number of channels on either side of fi to subtract [100]')
 
+(options, args) = parser.parse_args();
+
 if len(sys.argv)==1: 
 	parser.print_help();
 	dummy = sys.exit(0);
