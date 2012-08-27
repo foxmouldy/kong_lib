@@ -30,7 +30,7 @@ if bool(options.flagauto.upper())==True:
 	print "Flagging Autocorrelations"
 	print '\n'
 	print '\n'
-	flagautocorr(vis = msfile);
+	flagautocorr(vis = options.vis);
 
 print '\n'
 print 'Flagging Shadow\'d Visibilities'
