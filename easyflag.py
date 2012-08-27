@@ -6,6 +6,9 @@ import pylab as pl
 import os
 from optparse import OptionParser
 
+usage = "usage: %prog options"
+parser = OptionParser(usage=usage);
+
 # visfile
 parser.add_option("--vis", type='string', dest = 'vis', default=None, 
 	help = 'MS to be flagged [None]');
@@ -13,7 +16,6 @@ parser.add_option("--vis", type='string', dest = 'vis', default=None,
 # autocorrelations?
 parser.add_option("--flagauto", type='string', dest = 'flagauto', 
 	default=None, help='Flag autocorrelations? [False]')
-
 
 (options, args) = parser.parse_args();
 
