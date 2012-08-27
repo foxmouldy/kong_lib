@@ -16,7 +16,7 @@ parser.add_option("--vis", type = 'string', dest = 'vis', default=None,
 
 # Output MS
 parser.add_option("--splitvis", type='string', dest='splitvis', default=None, 
-	help = 'Name of Splitted MS [None]'
+	help = 'Name of Splitted MS [None]')
 
 # Centre Frequency 
 parser.add_option('--fi', type = 'string', dest='fi', default=None, 
