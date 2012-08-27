@@ -19,11 +19,11 @@ parser.add_option("--splitvis", type='string', dest='splitvis', default=None,
 	help = 'Name of Splitted MS [None]')
 
 # Centre Frequency 
-parser.add_option('--fi', type = 'string', dest='fi', default=None, 
+parser.add_option('--fi', type ='float', dest='fi', default=1418e06, 
 	help = "Centre frequency about which to extract MS [1418MHz]")
 
 # Number of Channels
-parser.add_option('--di', type='string', dest='di', default=None, 
+parser.add_option('--di', type='int', dest='di', default=100, 
 	help = 'Number of channels on either side of fi to subtract [100]')
 
 (options, args) = parser.parse_args();
