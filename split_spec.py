@@ -23,7 +23,7 @@ parser.add_option('--fi', type = 'string', dest='fi', default=None,
 	help = "Centre frequency about which to extract MS [1418MHz]")
 
 # Number of Channels
-parser.add_option('di', type='string', dest='di', default=None, 
+parser.add_option('--di', type='string', dest='di', default=None, 
 	help = 'Number of channels on either side of fi to subtract [100]')
 
 if len(sys.argv)==1: 
