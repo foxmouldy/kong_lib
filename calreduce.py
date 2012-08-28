@@ -20,6 +20,9 @@ parser.add_option('--gaspw', type='string', dest='gaspw', default=None,
 parser.add_option('--tag', type='string', dest='tag', default=None, 
 	help = 'Optional prefix tag for table naming [None]')
 
+parser.add_option('--refant', type='string', dest='tag', default='ant5', 
+	help = 'Reference antenna for calibration [ant5]')
+
 
 (options, args) = parser.parse_args();
 
@@ -55,7 +58,7 @@ print '\n'
 
 bandpass(vis = options.vis, caltable = btable, interp = '', 
 	field = options.cal, solint = 'inf', combine = 'scan', 
-	refant = 'ant3', minsnr=3.0);
+	refant = options.refant, minsnr=3.0);
 
 print '\n'
 print '-------------'
@@ -67,7 +70,7 @@ fields = options.cal+','+options.cal2;
 
 gaincal(vis = options.vis, caltable=gtable, field=fields, 
 	interp='nearest', spw=options.gaspw, solint='int', 
-	refant = 'ant3', gaintable = btable, minsnr=3.0);
+	refant = options.refant, gaintable = btable, minsnr=3.0);
 
 fluxscale(vis = options.vis, fluxtable = ftable, caltable = gtable, 
 	reference = options.cal, transfer = options.cal2);
