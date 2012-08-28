@@ -20,7 +20,7 @@ parser.add_option('--gaspw', type='string', dest='gaspw', default=None,
 parser.add_option('--tag', type='string', dest='tag', default=None, 
 	help = 'Optional prefix tag for table naming [None]')
 
-parser.add_option('--refant', type='string', dest='tag', default='ant5', 
+parser.add_option('--refant', type='string', dest='refant', default='ant5', 
 	help = 'Reference antenna for calibration [ant5]')
 
 
