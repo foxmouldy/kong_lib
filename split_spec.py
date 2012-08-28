@@ -5,7 +5,7 @@ import casac
 import pylab as pl
 import os
 from optparse import OptionParser 
-import brad_lib as br
+import kong_lib as br
 
 usage = "usage: %prog options"
 parser = OptionParser(usage=usage);

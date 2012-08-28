@@ -397,7 +397,7 @@ if options.ui!=None:
 	ui = read_inps(options.ui);
 else:
 	if os.path.exists('ngc3109_pipelinesettings.txt')==False:
-		print "Defaults not found. Copy from ~/brad_lib/ to . and try again :)"
+		print "Defaults not found. Copy from ~/kong_lib/ to . and try again :)"
 		sys.exit(0);
 	else: 
 		ui = read_inps('ngc3109_pipelinesettings.txt');
