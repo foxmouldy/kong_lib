@@ -38,9 +38,9 @@ else:
 
 for source in options.sources.split(','):
 	print "\n"
-	print "Making dirty image for source"+source;
+	print "Making dirty image for source "+source;
 	print "\n"
-	clean(vis=options.vis, imagename=tag+source+'.dirty', niter=0, 
+	clean(vis=options.vis, imagename=tag+'.src'+source+'.'+'dirty', niter=0, 
 		cell = options.cell);
 
 
