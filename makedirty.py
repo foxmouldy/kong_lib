@@ -34,7 +34,7 @@ if len(sys.argv)==1:
 if options.tag!=None: 
 	tag = options.tag;
 else:
-	tag = vis;
+	tag = options.vis;
 
 for source in options.sources.split(','):
 	print "\n"
