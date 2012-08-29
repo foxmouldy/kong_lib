@@ -42,10 +42,10 @@ else:
 	prefix = options.vis;
 
 giptable = prefix+'.cr.iptable';
-ktable = previx+'.cr.ktable';
-btable = prefix+'.'+options.cal+'.cr.btable';
-gtable = prefix+'.'+options.cal+'.cr.gtable';
-ftable = prefix+'.'+options.cal+'.cr.ftable';
+ktable = prefix+'.cr.ktable';
+btable = prefix+'.cr.btable';
+gtable = prefix+'.cr.gtable';
+ftable = prefix+'.cr.ftable';
 
 print '\n'
 print '-------------'
