@@ -19,7 +19,7 @@ parser.add_option('--cal', type='string', dest='cal', default=None,
 parser.add_option('--cal2', type='string', dest='cal2', default='',
 	help = 'Second Calibrator to Solve for [None]')
 parser.add_option('--ipspw', type='string', dest='ipspw', default='0:1900~2100', 
-	help = 'SPW for initial phase cal [0:1900~2100]'
+	help = 'SPW for initial phase cal [0:1900~2100]')
 parser.add_option('--gaspw', type='string', dest='gaspw', default=None, 
 	help = 'SPW over which to solve for gain solutions [ALL]');
 parser.add_option('--tag', type='string', dest='tag', default=None, 
