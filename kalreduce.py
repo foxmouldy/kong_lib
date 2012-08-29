@@ -18,6 +18,8 @@ parser.add_option('--cal', type='string', dest='cal', default=None,
 	help = 'Calibrator [None]');
 parser.add_option('--cal2', type='string', dest='cal2', default='',
 	help = 'Second Calibrator to Solve for [None]')
+parser.add_option('--ipspw', type='string', dest='ipspw', default='0:1900~2100', 
+	help = 'SPW for initial phase cal [0:1900~2100]'
 parser.add_option('--gaspw', type='string', dest='gaspw', default=None, 
 	help = 'SPW over which to solve for gain solutions [ALL]');
 parser.add_option('--tag', type='string', dest='tag', default=None, 
@@ -39,9 +41,11 @@ if options.tag!=None:
 else:
 	prefix = options.vis;
 
-btable = prefix+'.'+options.cal+'.calreduce.B0';
-gtable = prefix+'.'+options.cal+'.'+options.cal2+'.calreduce.G0';
-ftable = prefix+'.'+options.cal+'.'+options.cal2+'.calreduce.F0';
+giptable = prefix+'.cr.iptable';
+ktable = previx+'.cr.ktable';
+btable = prefix+'.'+options.cal+'.cr.btable';
+gtable = prefix+'.'+options.cal+'.cr.gtable';
+ftable = prefix+'.'+options.cal+'.cr.ftable';
 
 print '\n'
 print '-------------'
@@ -54,6 +58,29 @@ if options.cal=='1018-317':
 else:
 	setjy(vis = options.vis, field = options.cal);
 
+
+
+print '\n'
+print '-----------------'
+print 'Running GAINCAL'
+print "Initial Phase Cal"
+print '-----------------'
+print '\n'
+
+gaincal(vis = options.vis, caltable = giptable, field = options.cal+','+options.cal2, 
+	refant = options.refant, spw= options.ipspw, gaintype='G', calmode='p', solint='int')
+
+print '\n'
+print '-----------------'
+print 'Running GAINCAL'
+print "K Correction"
+print '-----------------'
+print '\n'
+
+gaincal(vis = options.vis, caltable = ktable, field=options.cal, refant = options.refant, 
+	spw = options.gaspw, gaintype = 'K', solint = 'inf', combine='scan', 
+	gaintable = giptable);
+
 print '\n'
 print '----------------'
 print 'Running BANDPASS'
@@ -62,7 +89,7 @@ print '\n'
 
 bandpass(vis = options.vis, caltable = btable, interp = '', 
 	field = options.cal, solint = 'inf', combine = 'scan', 
-	refant = options.refant, minsnr=3.0);
+	refant = options.refant, gaintable = [giptable, ktable], minsnr=3.0);
 
 print '\n'
 print '-------------'
@@ -74,7 +101,7 @@ fields = options.cal+','+options.cal2;
 
 gaincal(vis = options.vis, caltable=gtable, field=fields, 
 	interp='nearest', spw=options.gaspw, solint='inf', 
-	refant = options.refant, gaintable = btable, minsnr=3.0);
+	refant = options.refant, gaintable = [btable, ktable], minsnr=3.0);
 
 fluxscale(vis = options.vis, fluxtable = ftable, caltable = gtable, 
 	reference = options.cal, transfer = options.cal2);
