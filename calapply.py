@@ -18,7 +18,7 @@ parser.add_option('--vis', type='string', dest = 'vis', default=None,
 #	help = 'Flux table to be applied [None]')
 
 # btable 
-parser.add_option('--tables', type='string', dest='btable', default=None, 
+parser.add_option('--tables', type='string', dest='tables', default=None, 
 	help = 'Cal tables to be applied. [None]')
 
 # cal
