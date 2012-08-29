@@ -6,10 +6,10 @@ import pylab as pl
 import os
 from optparse import OptionParser 
 
-usage = "kalreduce.py performs the following: \n"
+usage = "usage: %prog options\n\n"
+usage = usage+"kalreduce.py performs the following: \n"
 usage = usage+ "setjy --> gaincal (ini phase) --> gaincal (K) --> bandpass --> gaincal (amp&phase) --> fluxscale \n"
 usage = usage+ "Differs from calreduce.py with Initial Phase Cal and K Correction. \n"
-usage = usage+	"usage: %prog options"
 parser = OptionParser(usage=usage);
 
 parser.add_option('--vis', type='string', dest = 'vis', default=None, 
