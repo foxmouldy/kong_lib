@@ -25,6 +25,11 @@ parser.add_option("--tag", type='string', dest='tag', default=None,
 parser.add_option("--cell", type='string', dest='cell', default='30.0arcsec', 
 	help = "Cell size for image [30.0arcsec]");
 
+# spectral window
+parser.add_option("--imspw", type='string', dest='imspw', default='', 
+	help = 'Channels to be imaged [All]')
+
+
 (options, args) = parser.parse_args();
 
 if len(sys.argv)==1: 
@@ -41,6 +46,6 @@ for source in options.sources.split(','):
 	print "Making dirty image for source "+source;
 	print "\n"
 	clean(vis=options.vis, imagename=tag+'.src'+source+'.'+'dirty', niter=0, 
-		cell = options.cell);
+		cell = options.cell, spw=options.imspw);
 
 
