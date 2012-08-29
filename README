@@ -1,4 +1,4 @@
-### Welcome to brad_lib. 
+### Welcome to kong_lib. 
 
 This is my personal repo meant to store my helper scripts for radio astronomical data handling. 
 As such, I can't guarantee that these scripts work for you! 
@@ -8,3 +8,103 @@ Bradley Frank (@foxmouldy)
 
 ### Support or Contact
 Email me at frank.brad@gmail.com 
+
+
+###KONG_LIB DOCUMENTATION
+###======================
+Bradley Frank, UCT, 2012
+http://foxmouldy.github.com/kong_lib/
+
+- The kong_lib scripts are casapy python scripts for the data reduction of spectral line 
+sources as observed by the KAT-7 telescope.
+However, the scripts are modular enough for you to adapt them to your specific
+observation, as long as your telescope is similar to KAT-7 :)
+
+- The philosophy and methodology behind the calibration and imaging setup here
+are extracted from the documentation and tutorials as presented for the VLA use-cases:
+http://casaguides.nrao.edu/index.php?title=Main_Page
+
+- To download the library, you can easily visit the landing page and just download it 
+and unzip it into your working directory: 
+http://foxmouldy.github.com/kong_lib/
+or you could clone the repo to track changes:
+	git clone git://github.com/foxmouldy/kong_lib.git
+
+- To fetch changes you would do the following: 
+	- Point a remote to the repo: 
+		git remote add upstream https://github.com/foxmouldy/kong_lib.git
+	- Fetch (unmerged) changes: 
+		git fetch upstream
+	- Merge the changes to your copy:
+		git merge upstream/master
+
+- PLEASE USE THE READ-ONLY VERSION!!!
+
+
+Cookbook
+========
+
+Each script is meant to be run from the CASA command line. For e.g. if you want to run easyflag.py:
+run kong_lib/easy_flag.py
+will return the help list. 
+
+1. Observations utilize the conventional phase referencing method of observation, i.e.
+observations of a primary flux calibrator, a phase calibrator close to the sources and, 
+of course, the spectral line source(s). 
+
+2. The calibration workflow as implemented by these scripts is as follows: 
+
+
++----------------+        +----------------+        +----------------+        +----------------+
+|                |        |                |        |                |        |                |
+|                |        |                |        |                |        |                |
+|  easyflag.py   +------->|  calreduce.py  +------->|  calapply.py   +------->|  makedirty.py  +
+|                |        |  kalreduce.py  |        |                |        |                |
+|                |        |                |        |                |        |                |
++----------------+        +----------------+        +----------------+        +----------------+
+ - Flags autocorrs          - setjy                                            - split corrected
+
+ - Performs rflag           - Bandpass                                         - perform mfs on
+                                                                                 each source
+                            - Gaincal
+
+                            - Fluxscale
+
+3. easyflag.py
+This flags the autocorrelations and uses tflagdata to do a simple rflag on the data. More sophisticated
+flagging should be done manually. 
+
+4. Calibrating the calibrators: calreduce.py and kalreduce.py
+4.1. calreduce.py
+This follows a very simple methodology: 
+
++----------+    +------------+     +-----------+    +------------+
+|          |    |            |     |           |    |            |
+|  setjy   +-K->|  bandpass  +---->|  gaincal  +--->| fluxscale  +------>  ftable
+|          |    |            |  ^  |           | ^  |            |
++----------+    +-----+------+  |  +-----+-----+ |  +------------+
+                      |         |        |       |
+                      |         |        |       |
+                      v         |        v       |
+                    btable+-----+       gtable+--+
+
+4.2. kalreduce.py
+Identical to the process above, except where the K appears in the above workflow. The K represents the
+following: 
+
+                   +---------------+           +--------------+
+                   |  gaincal      |           |  gaincal     |
+                   | initial phase +----------+| K Correction |
+                   | correction    |     ^     |              |
+                   +---------------+     |     +--------------+
+                          +              |             +
+                          |              |             |
+                          v              |             v
+                       iptable+----------+          ktable
+
+5. calapply.py 
+Once you're satisfied with your tables, you can then simply apply them to your data. 
+
+6. makedirty.py
+This script will split the corrected data column into a new MS, and will make an MFS dirty image of 
+each of the sources.
