@@ -22,7 +22,8 @@ parser.add_option('--tag', type='string', dest='tag', default=None,
 
 parser.add_option('--refant', type='string', dest='refant', default='ant5', 
 	help = 'Reference antenna for calibration [ant5]')
-
+parser.add_option("--gasolint", type='string', dest='gasolint', default='inf', 
+	help = 'Solution interval to be used when doing gaincal [\'inf\']')
 
 (options, args) = parser.parse_args();
 
@@ -69,7 +70,7 @@ print '\n'
 fields = options.cal+','+options.cal2;
 
 gaincal(vis = options.vis, caltable=gtable, field=fields, 
-	interp='nearest', spw=options.gaspw, solint='int', 
+	interp='nearest', spw=options.gaspw, solint='inf', 
 	refant = options.refant, gaintable = btable, minsnr=3.0);
 
 fluxscale(vis = options.vis, fluxtable = ftable, caltable = gtable, 
