@@ -39,11 +39,14 @@ if options.tag!=None:
 else:
 	tag = options.vis;
 
+split(vis = options.vis, outputvis = options.vis.replace('.ms','')+'.corrected.ms', 
+	datacolumn = 'corrected', field = options.sources, spw=options.imspw);
+
 for source in options.sources.split(','):
 	print "\n"
 	print "Making dirty image for source "+source;
 	print "\n"
-	clean(vis=options.vis, imagename=tag+'.src'+source+'.'+'dirty', niter=0, 
+	clean(vis=options.vis.replace('.ms','')+'.corrected.ms', imagename=tag+'.src'+source+'.'+'dirty', niter=0, 
 		cell = options.cell, spw=options.imspw);
 
 

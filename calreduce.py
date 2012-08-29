@@ -19,7 +19,6 @@ parser.add_option('--gaspw', type='string', dest='gaspw', default=None,
 	help = 'SPW over which to solve for gain solutions [ALL]');
 parser.add_option('--tag', type='string', dest='tag', default=None, 
 	help = 'Optional prefix tag for table naming [None]')
-
 parser.add_option('--refant', type='string', dest='refant', default='ant5', 
 	help = 'Reference antenna for calibration [ant5]')
 parser.add_option("--gasolint", type='string', dest='gasolint', default='inf', 
@@ -36,9 +35,9 @@ if options.tag!=None:
 else:
 	prefix = options.vis;
 
-btable = prefix+'.'+options.cal+'.calreduce.B0';
-gtable = prefix+'.'+options.cal+'.'+options.cal2+'.calreduce.G0';
-ftable = prefix+'.'+options.cal+'.'+options.cal2+'.calreduce.F0';
+btable = prefix+'.cr.btable';
+gtable = prefix+'.cr.gtable';
+ftable = prefix+'.cr.ftable';
 
 print '\n'
 print '-------------'
@@ -70,7 +69,7 @@ print '\n'
 fields = options.cal+','+options.cal2;
 
 gaincal(vis = options.vis, caltable=gtable, field=fields, 
-	interp='nearest', spw=options.gaspw, solint='inf', 
+	interp='nearest', spw=options.gaspw, solint=options.gasolint, 
 	refant = options.refant, gaintable = btable, minsnr=3.0);
 
 fluxscale(vis = options.vis, fluxtable = ftable, caltable = gtable, 

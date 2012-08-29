@@ -24,11 +24,12 @@ parser.add_option('--gaspw', type='string', dest='gaspw', default=None,
 	help = 'SPW over which to solve for gain solutions [ALL]');
 parser.add_option('--tag', type='string', dest='tag', default=None, 
 	help = 'Optional prefix tag for table naming [None]')
-
 parser.add_option('--refant', type='string', dest='refant', default='ant5', 
 	help = 'Reference antenna for calibration [ant5]')
 parser.add_option("--gasolint", type='string', dest='gasolint', default='inf', 
 	help = 'Solution interval to be used when doing gaincal [\'inf\']')
+parser.add_option("--ksolint", type='string', dest='ksolint', default='inf', 
+	help = "Solution interval over which to track K delays [inf]"
 
 (options, args) = parser.parse_args();
 
@@ -41,11 +42,11 @@ if options.tag!=None:
 else:
 	prefix = options.vis;
 
-giptable = prefix+'.cr.iptable';
-ktable = prefix+'.cr.ktable';
-btable = prefix+'.cr.btable';
-gtable = prefix+'.cr.gtable';
-ftable = prefix+'.cr.ftable';
+giptable = prefix+'.kr.iptable';
+ktable = prefix+'.kr.ktable';
+btable = prefix+'.kr.btable';
+gtable = prefix+'.kr.gtable';
+ftable = prefix+'.kr.ftable';
 
 print '\n'
 print '-------------'
@@ -78,7 +79,7 @@ print '-----------------'
 print '\n'
 
 gaincal(vis = options.vis, caltable = ktable, field=options.cal, refant = options.refant, 
-	spw = options.gaspw, gaintype = 'K', solint = 'inf', combine='scan', 
+	spw = options.gaspw, gaintype = 'K', options.ksolint, combine='scan', 
 	gaintable = giptable);
 
 print '\n'
@@ -92,15 +93,15 @@ bandpass(vis = options.vis, caltable = btable, interp = '',
 	refant = options.refant, gaintable = [giptable, ktable], minsnr=3.0);
 
 print '\n'
-print '-------------'
+print '----------------'
 print 'Running GAINCAL'
-print '-------------'
+print '----------------'
 print '\n'
 
 fields = options.cal+','+options.cal2;
 
 gaincal(vis = options.vis, caltable=gtable, field=fields, 
-	interp='nearest', spw=options.gaspw, solint='inf', 
+	interp='nearest', spw=options.gaspw, solint=options.gasolint, 
 	refant = options.refant, gaintable = [btable, ktable], minsnr=3.0);
 
 fluxscale(vis = options.vis, fluxtable = ftable, caltable = gtable, 
