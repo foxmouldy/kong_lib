@@ -79,7 +79,7 @@ print '-----------------'
 print '\n'
 
 gaincal(vis = options.vis, caltable = ktable, field=options.cal, refant = options.refant, 
-	spw = options.gaspw, gaintype = 'K', options.ksolint, combine='scan', 
+	spw = options.gaspw, gaintype = 'K', solint=options.ksolint, combine='scan', 
 	gaintable = giptable);
 
 print '\n'
