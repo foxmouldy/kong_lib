@@ -58,7 +58,7 @@ print '\n'
 
 bandpass(vis = options.vis, caltable = btable, interp = '', 
 	field = options.cal, solint = 'inf', combine = 'scan', 
-	refant = options.refant, minsnr=3.0);
+	refant = options.refant, minsnr=3.0, spw=options.gaspw);
 
 print '\n'
 print '-------------'
@@ -73,4 +73,4 @@ gaincal(vis = options.vis, caltable=gtable, field=fields,
 	refant = options.refant, gaintable = btable, minsnr=3.0);
 
 fluxscale(vis = options.vis, fluxtable = ftable, caltable = gtable, 
-	reference = options.cal, transfer = options.cal2);
+	reference = options.cal, transfer = options.cal2, spw=options.gaspw);
