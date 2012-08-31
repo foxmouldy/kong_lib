@@ -29,7 +29,7 @@ parser.add_option('--refant', type='string', dest='refant', default='ant5',
 parser.add_option("--gasolint", type='string', dest='gasolint', default='inf', 
 	help = 'Solution interval to be used when doing gaincal [\'inf\']')
 parser.add_option("--ksolint", type='string', dest='ksolint', default='inf', 
-	help = "Solution interval over which to track K delays [inf]"
+	help = "Solution interval over which to track K delays [inf]")
 
 (options, args) = parser.parse_args();
 
