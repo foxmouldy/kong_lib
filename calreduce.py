@@ -13,7 +13,7 @@ parser.add_option('--vis', type='string', dest = 'vis', default=None,
 	help = 'Input MS [None]');
 parser.add_option('--cal', type='string', dest='cal', default=None, 
 	help = 'Calibrator [None]');
-parser.add_option('--cal2', type='string', dest='cal2', default='',
+parser.add_option('--cal2', type='string', dest='cal2', default=None,
 	help = 'Second Calibrator to Solve for [None]')
 parser.add_option('--gaspw', type='string', dest='gaspw', default=None, 
 	help = 'SPW over which to solve for gain solutions [ALL]');
@@ -66,11 +66,15 @@ print 'Running GAINCAL'
 print '-------------'
 print '\n'
 
-fields = options.cal+','+options.cal2;
+if options.cal2!=None:
+	fields = options.cal+','+options.cal2;
+else:
+	fields = options.cal;
 
 gaincal(vis = options.vis, caltable=gtable, field=fields, 
 	interp='nearest', spw=options.gaspw, solint=options.gasolint, 
 	refant = options.refant, gaintable = btable, minsnr=3.0);
 
-fluxscale(vis = options.vis, fluxtable = ftable, caltable = gtable, 
-	reference = options.cal, transfer = options.cal2, spw=options.gaspw);
+if options.cal2!=None:
+	fluxscale(vis = options.vis, fluxtable = ftable, caltable = gtable, 
+		reference = options.cal, transfer = options.cal2);
