@@ -15,7 +15,7 @@ parser.add_option("--vis", type='string', dest = 'vis', default=None,
 
 # autocorrelations?
 parser.add_option("--flagauto", type='string', dest = 'flagauto', 
-	default=None, help='Flag autocorrelations? [False]')
+	default='False', help='Flag autocorrelations? [False]')
 
 (options, args) = parser.parse_args();
 
