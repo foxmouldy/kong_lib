@@ -4,7 +4,7 @@ from taskinit import *
 import casac
 import pylab as pl
 import os
-from optparse import OptionParse
+from optparse import OptionParser
 
 usage = "usage: %prog options"
 parser = OptionParser(usage=usage);
@@ -33,11 +33,11 @@ if len(sys.argv)==1:
 
 
 # Boltzmann's Constant, Converting to Jy
-k = 1.38e09;
+k = 1.38e03;
 
 # Get Number of Antennas N:
 tb.open(options.vis+'/ANTENNA');
-N = len(tb.getcol('NAME');
+N = len(tb.getcol('NAME'));
 
 # Get Dish Diameter
 D = tb.getcol('DISH_DIAMETER')[0]; 
@@ -46,7 +46,7 @@ tb.close();
 
 # Get Total Bandwidth dv
 tb.open(options.vis+'/SPECTRAL_WINDOW');
-dv = tb.getcol('TOTAL_BANDWIDTH');
+dv = tb.getcol('TOTAL_BANDWIDTH')[0];
 tb.close();
 
 # Total Integration Time
@@ -61,13 +61,13 @@ pss = pss_N / pss_D;
 
 print "\n"
 print "\n"
-print "Point Source Sensitivity Parameters for Source"+str(options.field_id);
-print "----------------------------------------------"
+print "Point Source Sensitivity Parameters for Source "+str(options.field_id);
+print "-------------------------------------------------"
 print "Total Integration Time [s] = "+str(T);
 print "Total Bandwidth [Hz] = "+str(dv);
 print "Number of Antennas = "+str(N);
 print "Approximate Dish Area [m^2] = "+str(A);
-print "User Input Tsys [k] = "+str(options.tsys);
+print "User Input Tsys [K] = "+str(options.tsys);
 print "\n"
 print "Point Source Sensitivity [Jy] = "+str(pss);
 
