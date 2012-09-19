@@ -76,4 +76,4 @@ print "Approximate Dish Area [m^2] = "+str(A);
 print "User Input Tsys [K] = "+str(options.tsys);
 print "\n"
 print "Point Source Sensitivity [Jy] = "+str(pss);
-print "Point Source Sensitivity per channel [Jy] = "+str(pss_per_chan);
+print "Point Source Sensitivity per channel [Jy] = "+str(pss_per_chan[0]);
