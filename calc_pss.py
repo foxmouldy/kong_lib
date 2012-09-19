@@ -48,6 +48,7 @@ tb.close();
 tb.open(options.vis+'/SPECTRAL_WINDOW');
 dv = tb.getcol('TOTAL_BANDWIDTH')[0];
 Nchan = tb.getcol('NUM_CHAN')[0];
+dv_per_chan = tb.getcol('CHAN_WIDTH')
 tb.close();
 
 # Total Integration Time
@@ -59,7 +60,9 @@ T = Nints * dt; #
 pss_N = pl.sqrt(2)*options.tsys*k;
 pss_D = options.eff * A * pl.sqrt(N*(N-1)*dv*T);
 pss = pss_N / pss_D;
-pss_per_chan = pss/Nchan;
+
+pss_D_per_chan = options.eff * A * pl.sqrt(N*(N-1)*dv_per_chan*T);
+pss_per_chan = pss_N / pss_D_per_chan;
 
 print "\n"
 print "\n"
