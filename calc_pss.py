@@ -47,6 +47,7 @@ tb.close();
 # Get Total Bandwidth dv
 tb.open(options.vis+'/SPECTRAL_WINDOW');
 dv = tb.getcol('TOTAL_BANDWIDTH')[0];
+Nchan = tb.getcol('NUM_CHAN')[0];
 tb.close();
 
 # Total Integration Time
@@ -58,6 +59,7 @@ T = Nints * dt; #
 pss_N = pl.sqrt(2)*options.tsys*k;
 pss_D = options.eff * A * pl.sqrt(N*(N-1)*dv*T);
 pss = pss_N / pss_D;
+pss_per_chan = pss/Nchan;
 
 print "\n"
 print "\n"
@@ -65,8 +67,10 @@ print "Point Source Sensitivity Parameters for Source "+str(options.field_id);
 print "-------------------------------------------------"
 print "Total Integration Time [s] = "+str(T);
 print "Total Bandwidth [Hz] = "+str(dv);
+print "Number of Channels = "+str(Nchan);
 print "Number of Antennas = "+str(N);
 print "Approximate Dish Area [m^2] = "+str(A);
 print "User Input Tsys [K] = "+str(options.tsys);
 print "\n"
 print "Point Source Sensitivity [Jy] = "+str(pss);
+print "Point Source Sensitivity per channel [Jy] = "+str(pss_per_chan);
