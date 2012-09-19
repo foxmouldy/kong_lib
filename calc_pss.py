@@ -48,7 +48,7 @@ tb.close();
 tb.open(options.vis+'/SPECTRAL_WINDOW');
 dv = tb.getcol('TOTAL_BANDWIDTH')[0];
 Nchan = tb.getcol('NUM_CHAN')[0];
-dv_per_chan = tb.getcol('CHAN_WIDTH')
+dv_per_chan = tb.getcol('CHAN_WIDTH')[0];
 tb.close();
 
 # Total Integration Time
